@@ -1,0 +1,37 @@
+name: Build
+on:
+  push: { branches: [main], tags: ["v*"] }
+  workflow_dispatch:
+permissions: { contents: write }
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: windows-latest, icon: icon.ico }
+          - { os: macos-latest, icon: icon.icns }
+          - { os: ubuntu-latest, icon: icon.png }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: sudo apt-get install -y python3-tk
+        if: matrix.os == 'ubuntu-latest'
+      - run: pip install -r requirements.txt pyinstaller
+      - run: pyinstaller --onefile --noconsole --name StayAwake --icon "src/stay_awake/assets/${{ matrix.icon }}" --add-data "src/stay_awake/assets:assets" --paths src src/stay_awake/main.py
+      - run: mv dist/StayAwake "dist/StayAwake-${{ matrix.os }}" || true
+        if: matrix.os != 'windows-latest'
+      - uses: actions/upload-artifact@v4
+        with: { name: StayAwake-${{ matrix.os }}, path: dist/* }
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: artifacts }
+      - run: mkdir -p release && find artifacts -type f -exec cp {} release/ \;
+      - uses: softprops/action-gh-release@v2
+        with: { files: release/*, generate_release_notes: true }

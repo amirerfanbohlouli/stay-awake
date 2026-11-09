@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "stay-awake"
+version = "0.1.0"
+description = "Keep your system awake with one click. Cross-platform, minimal UI."
+authors = [{name = "Amir Erfan Bohlouli", email = "amirerfanbohlouli@gmail.com"}]
+dependencies = ["customtkinter>=5.2.0"]
+[project.gui-scripts]
+stay-awake-gui = "stay_awake.main:main"
+[tool.setuptools.packages.find]
+where = ["src"]
