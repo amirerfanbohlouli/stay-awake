@@ -56,6 +56,7 @@ jobs:
             --icon "src/stay_awake/assets/${{ matrix.icon }}" \
             --add-data "src/stay_awake/assets:assets" \
             --paths src \
+            --collect-all customtkinter \
             src/stay_awake/main.py
 
       - name: Rename binary
