@@ -17,8 +17,6 @@ jobs:
         include:
           - os: windows-latest
             icon: icon.ico
-          - os: macos-latest
-            icon: icon.icns
           - os: ubuntu-latest
             icon: icon.png
     runs-on: ${{ matrix.os }}
@@ -48,8 +46,8 @@ jobs:
             --paths src `
             src/stay_awake/main.py
 
-      - name: Build binary (Unix)
-        if: runner.os != 'Windows'
+      - name: Build binary (Linux)
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           pyinstaller --onefile --noconsole --name StayAwake \
@@ -57,12 +55,11 @@ jobs:
             --add-data "src/stay_awake/assets:assets" \
             --paths src \
             --collect-all customtkinter \
-            --collect-all tkinter \
             src/stay_awake/main.py
 
-      - name: Rename binary
-        if: matrix.os != 'windows-latest'
-        run: mv dist/StayAwake "dist/StayAwake-${{ matrix.os }}" || true
+      - name: Rename Linux binary
+        if: matrix.os == 'ubuntu-latest'
+        run: mv dist/StayAwake dist/StayAwake-linux || true
 
       - uses: actions/upload-artifact@v4
         with:
