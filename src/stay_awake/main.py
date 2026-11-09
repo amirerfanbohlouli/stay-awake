@@ -1,6 +1,9 @@
 import atexit, os, sys
 import customtkinter as ctk
-from .inhibitor import Inhibitor
+try:
+    from .inhibitor import Inhibitor
+except ImportError:
+    from inhibitor import Inhibitor
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 BG_ACTIVE = "#b33a3a"; BG_IDLE = "#1f6aa5"
