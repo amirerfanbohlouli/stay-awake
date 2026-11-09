@@ -57,6 +57,7 @@ jobs:
             --add-data "src/stay_awake/assets:assets" \
             --paths src \
             --collect-all customtkinter \
+            --collect-all tkinter \
             src/stay_awake/main.py
 
       - name: Rename binary
