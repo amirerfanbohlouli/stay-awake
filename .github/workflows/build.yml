@@ -22,7 +22,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -44,7 +43,8 @@ jobs:
             --icon "src/stay_awake/assets/${{ matrix.icon }}" `
             --add-data "src/stay_awake/assets;assets" `
             --paths src `
-            src/stay_awake/main.py
+            --collect-all customtkinter `
+            run.py
 
       - name: Build binary (Linux)
         if: runner.os == 'Linux'
@@ -55,7 +55,7 @@ jobs:
             --add-data "src/stay_awake/assets:assets" \
             --paths src \
             --collect-all customtkinter \
-            src/stay_awake/main.py
+            run.py
 
       - name: Rename Linux binary
         if: matrix.os == 'ubuntu-latest'
@@ -74,12 +74,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
-
       - name: Collect files
         run: |
           mkdir -p release
           find artifacts -type f -exec cp {} release/ \;
-
       - uses: softprops/action-gh-release@v2
         with:
           files: release/*
